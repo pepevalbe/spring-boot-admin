@@ -15,10 +15,10 @@
   -->
 
 <template>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg break-inside-avoid mb-6 backdrop-filter backdrop-blur-sm bg-opacity-80">
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg break-inside-avoid mb-6 backdrop-filter backdrop-blur-sm bg-opacity-80 relative">
     <header
       v-if="title"
-      class="flex justify-between px-4 py-5 sm:px-6 items-center"
+      class=" justify-between px-4 py-5 sm:px-6 items-center"
       :class="{'sticky': headerSticksBelow}"
     >
       <h3 class="text-lg leading-6 font-medium text-gray-900">

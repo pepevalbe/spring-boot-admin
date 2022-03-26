@@ -64,7 +64,7 @@
       </template>
     </sba-modal>
 
-    <div class="application-list-item card" :class="{'is-active': isExpanded}">
+    <div class="application-list-item card bg-white px-6 py-3" :class="{'is-active': isExpanded}">
       <header class="hero application-list-item__header" :class="headerClass" v-on="$listeners">
         <application-summary v-if="!isExpanded" :application="application" />
         <h1 v-else class="title is-size-5" v-text="application.name" />
@@ -102,6 +102,7 @@
           />
         </div>
       </header>
+
       <div class="card-content" v-if="isExpanded">
         <sba-modal v-model="isModalShutdownInstanceOpen">
           <template v-slot:header>
@@ -202,7 +203,7 @@ export default {
     hasNotificationFiltersSupport: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
@@ -294,13 +295,13 @@ export default {
 </script>
 <style lang="css">
 .application-list-item {
-  transition: all ease-out 86ms;
+  transition: all ease-out 250ms;
 }
 .application-list-item .icon-button {
   padding: 0.5em 1em;
 }
 .application-list-item.is-active {
-  margin: 0.75rem -0.75rem;
+  @apply my-1 -mx-1;
   max-width: unset;
 }
 .application-list-item__header {
@@ -309,8 +310,8 @@ export default {
   justify-content: flex-start;
   align-items: center;
 }
-*:not(.is-active) > .application-list-item__header:hover {
-  background-color: #fafafa;
+.application-list-item:not(.is-active):hover {
+  @apply bg-gray-100;
 }
 .application-list-item__header > *:not(:first-child) {
   margin-left: 12px;

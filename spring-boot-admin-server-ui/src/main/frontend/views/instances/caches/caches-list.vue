@@ -66,13 +66,12 @@
 <script>
 import Instance from '@/services/instance';
 import {concatMap, listen, of, tap} from '@/utils/rxjs';
-import SbaActionButtonScoped from '@/components/sba-action-button-scoped';
 import Application from '@/services/application';
 import SbaButton from '@/components/sba-button';
 
 export default {
   name: 'CachesList',
-  components: {SbaButton, SbaActionButtonScoped},
+  components: {SbaButton},
   props: {
     caches: {
       type: Array,

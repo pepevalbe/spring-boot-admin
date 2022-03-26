@@ -16,7 +16,7 @@
 
 <template>
   <div class="h-full">
-    <div class="bg-wave" v-html="WaveBackground" />
+    <sba-wave />
     <div class="h-full">
       <instance-sidebar
         v-if="instance"
@@ -36,9 +36,10 @@
 <script>
   import InstanceSidebar from './sidebar';
   import WaveBackground from '!raw-loader!../../../assets/img/wave.svg'
+  import SbaWave from '@/components/sba-wave';
 
   export default {
-    components: {InstanceSidebar},
+    components: {SbaWave, InstanceSidebar},
     props: {
       instanceId: {
         type: String,

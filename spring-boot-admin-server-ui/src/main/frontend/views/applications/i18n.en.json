@@ -13,6 +13,7 @@
     "status": "Status",
     "label": "Applications",
     "up": "up",
+    "down": "down",
     "shutdown": "Shutdown application <code>{name}</code>?",
     "restart": "Restart application <code>{name}</code>?",
     "restarted": "Successfully restarted application <code>{name}</code>"

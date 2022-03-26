@@ -15,34 +15,40 @@
   -->
 
 <template>
-  <section class="section">
-    <div class="container">
-      <p v-if="!applicationsInitialized" class="is-muted is-loading" v-text="$t('applications.loading_applications')" />
-      <sba-alert :error="error" :title="$t('applications.server_connection_failed')" severity="WARN" />
+  <section>
+    <sba-wave :wave-classes="['-mt-14']" />
+
+    <sba-sticky-subnav>
+      <div class="container mx-auto flex items-center">
+        <div>
+          <applications-stats :applications="applications" />
+        </div>
+        <div class="flex-1">
+          <sba-input name="filter" v-model="filter" type="search" :placeholder="$t('term.filter')">
+            <template v-slot:prepend>
+              <font-awesome-icon icon="filter" />
+            </template>
+          </sba-input>
+        </div>
+      </div>
+    </sba-sticky-subnav>
+
+
+    <div class="container mx-auto py-6">
+      <sba-alert :error="error" v-if="error" :title="$t('applications.server_connection_failed')" severity="WARN" class-names="mb-6" />
+      <sba-panel v-if="!applicationsInitialized || (!applicationsInitialized && applications.length === 0)">
+        <p v-if="!applicationsInitialized" class="is-muted is-loading" v-text="$t('applications.loading_applications')" />
+        <p v-if="applicationsInitialized && applications.length === 0" class="is-muted" v-text="$t('applications.no_applications_registered')" />
+      </sba-panel>
 
       <template v-if="applicationsInitialized">
-        <applications-stats :applications="applications" />
-
-        <div class="field">
-          <p class="control is-expanded has-icons-left">
-            <input
-              :value="filter"
-              class="input"
-              type="search"
-              @input="handleFilterInput"
-            >
-            <span class="icon is-small is-left">
-              <font-awesome-icon icon="filter" />
-            </span>
-          </p>
-        </div>
-        <div
+        <sba-panel
           v-for="group in statusGroups"
           :key="group.status"
           class="application-group"
+          :title="$t('applications.status') + ': ' + $t('applications.' + group.statusKey)"
         >
-          <p class="heading" v-text="$t('applications.' + group.statusKey)" />
-          <div class="applications-list">
+          <div class="-mx-4 -my-3">
             <applications-list-item v-for="application in group.applications"
                                     :id="application.name"
                                     :key="application.name"
@@ -58,8 +64,8 @@
                                     @toggle-notification-filter-settings="toggleNotificationFilterSettings"
             />
           </div>
-        </div>
-        <p v-if="applications.length === 0" class="is-muted" v-text="$t('applications.no_applications_registered')" />
+        </sba-panel>
+
         <notification-filter-settings v-if="showNotificationFilterSettingsObject"
                                       v-popper="`nf-settings-${showNotificationFilterSettingsObject.id || showNotificationFilterSettingsObject.name}`"
                                       :notification-filters="notificationFilters"
@@ -86,6 +92,7 @@ import ApplicationsListItem from './applications-list-item';
 import ApplicationsStats from './applications-stats';
 import handle from './handle';
 import NotificationFilterSettings from './notification-filter-settings';
+import SbaStickySubnav from '@/components/sba-sticky-subnav';
 
 const instanceMatchesFilter = (term, instance) => {
   const predicate = value => String(value).toLowerCase().includes(term);
@@ -117,6 +124,7 @@ export default {
   directives: {onClickaway, Popper},
   mixins: [subscribing],
   components: {
+    SbaStickySubnav,
     ApplicationsStats,
     ApplicationsListItem,
     NotificationFilterSettings
@@ -131,7 +139,7 @@ export default {
     '$route.query': {
       immediate: true,
       handler() {
-        this.filter = this.$route.query.q;
+        this.filter = this.$route.query.q || '';
       }
     },
     'selected': {
