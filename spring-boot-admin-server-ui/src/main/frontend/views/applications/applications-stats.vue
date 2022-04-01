@@ -20,24 +20,13 @@
       <sba-tag :label="$t('applications.applications')" :value="applicationsCount" />
       <sba-tag :label="$t('applications.instances')" :value="instancesCount" />
     </div>
-    <div class="flex-1">
-      <span class="inline-flex items-center bg-white leading-none rounded p-1 mr-1 shadow text-teal text-sm">
-        <div v-if="downCount === 0">
-          <sba-status-badge :status="$t('applications.all_up')" />
-        </div>
-        <div v-else>
-          <span class="heading" v-text="$t('applications.instances_down')" />
-          <span class="title has-text-danger" v-text="downCount" />
-        </div>
-      </span>
-    </div>
   </div>
 </template>
 <script>
   import SbaTag from '@/components/sba-tag';
   import SbaStatusBadge from '@/components/sba-status-badge';
   export default {
-    components: {SbaStatusBadge, SbaTag},
+    components: { SbaTag},
     props: {
       applications: {
         type: Array,

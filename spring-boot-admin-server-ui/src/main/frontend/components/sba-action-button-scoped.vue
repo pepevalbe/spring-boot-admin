@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div class="inline-flex rounded-md items-start btn-group">
+  <div class="inline-flex rounded-md items-start">
     <sba-toggle-scope-button v-if="instanceCount > 1"
                              v-model="currentScope"
                              class="rounded-r-none relative focus:z-10"

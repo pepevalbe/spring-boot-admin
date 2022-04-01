@@ -35,35 +35,48 @@
 
 
     <div class="container mx-auto py-6">
-      <sba-alert :error="error" v-if="error" :title="$t('applications.server_connection_failed')" severity="WARN" class-names="mb-6" />
+      <sba-alert :error="error" v-if="error" :title="$t('applications.server_connection_failed')" severity="WARN"
+                 class-names="mb-6"
+      />
       <sba-panel v-if="!applicationsInitialized || (!applicationsInitialized && applications.length === 0)">
-        <p v-if="!applicationsInitialized" class="is-muted is-loading" v-text="$t('applications.loading_applications')" />
-        <p v-if="applicationsInitialized && applications.length === 0" class="is-muted" v-text="$t('applications.no_applications_registered')" />
+        <p v-if="!applicationsInitialized" class="is-muted is-loading"
+           v-text="$t('applications.loading_applications')"
+        />
+        <p v-if="applicationsInitialized && applications.length === 0" class="is-muted"
+           v-text="$t('applications.no_applications_registered')"
+        />
       </sba-panel>
 
       <template v-if="applicationsInitialized">
+        <application-status-hero :applications="applications" />
+
         <sba-panel
           v-for="group in statusGroups"
           :key="group.status"
           class="application-group"
-          :title="$t('applications.status') + ': ' + $t('applications.' + group.statusKey)"
+          :title="$tc('term.applications_tc', group.applications.length)"
         >
-          <div class="-mx-4 -my-3">
-            <applications-list-item v-for="application in group.applications"
-                                    :id="application.name"
-                                    :key="application.name"
-                                    v-on-clickaway="(event) => deselect(event, application.name)"
-                                    :application="application"
-                                    :has-notification-filters-support="hasNotificationFiltersSupport"
-                                    :is-expanded="selected === application.name || Boolean(filter)"
-                                    :notification-filters="notificationFilters"
-                                    @unregister="unregister"
-                                    @shutdown="shutdown"
-                                    @restart="restart"
-                                    @click.stop="select(application.name)"
-                                    @toggle-notification-filter-settings="toggleNotificationFilterSettings"
-            />
-          </div>
+          <template v-slot:title>
+            <sba-status-badge :status="group.statusKey" />
+          </template>
+          <template>
+            <div class="-mx-4 -my-3">
+              <applications-list-item v-for="application in group.applications"
+                                      :id="application.name"
+                                      :key="application.name"
+                                      v-on-clickaway="(event) => deselect(event, application.name)"
+                                      :application="application"
+                                      :has-notification-filters-support="hasNotificationFiltersSupport"
+                                      :is-expanded="selected === application.name || Boolean(filter)"
+                                      :notification-filters="notificationFilters"
+                                      @unregister="unregister"
+                                      @shutdown="shutdown"
+                                      @restart="restart"
+                                      @click.stop="select(application.name)"
+                                      @toggle-notification-filter-settings="toggleNotificationFilterSettings"
+              />
+            </div>
+          </template>
         </sba-panel>
 
         <notification-filter-settings v-if="showNotificationFilterSettingsObject"
@@ -93,6 +106,8 @@ import ApplicationsStats from './applications-stats';
 import handle from './handle';
 import NotificationFilterSettings from './notification-filter-settings';
 import SbaStickySubnav from '@/components/sba-sticky-subnav';
+import SbaStatusBadge from '@/components/sba-status-badge';
+import ApplicationStatusHero from '@/views/applications/application-status-hero';
 
 const instanceMatchesFilter = (term, instance) => {
   const predicate = value => String(value).toLowerCase().includes(term);
@@ -124,6 +139,8 @@ export default {
   directives: {onClickaway, Popper},
   mixins: [subscribing],
   components: {
+    ApplicationStatusHero,
+    SbaStatusBadge,
     SbaStickySubnav,
     ApplicationsStats,
     ApplicationsListItem,
