@@ -45,6 +45,7 @@
       </div>
 
       <sba-env-manager v-if="env && hasEnvManagerSupport"
+                       :application="application"
                        :instance="instance" :property-sources="env.propertySources"
                        @refresh="fetchEnv" @update="fetchEnv"
       />
