@@ -20,13 +20,13 @@
       <h1 class="title" v-text="$t('journal.title')" />
       <h2
         v-if="filter.application"
-        v-text="filter.application"
         class="subtitle"
+        v-text="filter.application"
       />
       <h1
         v-else-if="filter.instanceId"
-        v-text="`${getName(filter.instanceId)} (${filter.instanceId})`"
         class="subtitle"
+        v-text="`${getName(filter.instanceId)} (${filter.instanceId})`"
       />
       <div v-if="error" class="message is-warning">
         <div class="message-body">
@@ -47,7 +47,7 @@
             <div class="field is-narrow">
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select @change="setPageSize($event.target.value)" :value="pageSize">
+                  <select :value="pageSize" @change="setPageSize($event.target.value)">
                     <option v-for="perPage in [10, 25, 50, 100, 200, 500]" :key="'pp_' + perPage" v-text="perPage" />
                     <option :value="events.length" v-text="$t('journal.per_page.all')" />
                   </select>
@@ -68,28 +68,30 @@
           </tr>
         </thead>
         <transition-group tag="tbody" name="fade-in">
-          <tr key="new-events" v-if="newEventsCount > 0">
+          <tr v-if="newEventsCount > 0" key="new-events">
             <td
               colspan="4"
               class="has-text-primary has-text-centered is-selectable"
-              v-text="`${newEventsCount} new events`"
               @click="showNewEvents"
+              v-text="`${newEventsCount} new events`"
             />
           </tr>
-          <template v-for="event in listedEvents">
-            <tr class="is-selectable" :key="event.key"
-                @click="showPayload[event.key] ? $delete(showPayload, event.key) : $set(showPayload, event.key, true)"
+          <template v-for="event in listedEvents" :key="event.key">
+            <tr
+              class="is-selectable"
+              @click="showPayload[event.key] ? $delete(showPayload, event.key) : $set(showPayload, event.key, true)"
             >
               <td v-text="getName(event.instance)" />
               <td v-text="event.instance" />
               <td v-text="event.timestamp.format('L HH:mm:ss.SSS')" />
               <td>
-                <span v-text="event.type" /> <span v-if="event.type === 'STATUS_CHANGED'"
-                                                   v-text="`(${event.payload.statusInfo.status})`"
+                <span v-text="event.type" /> <span
+                  v-if="event.type === 'STATUS_CHANGED'"
+                  v-text="`(${event.payload.statusInfo.status})`"
                 />
               </td>
             </tr>
-            <tr :key="`${event.key}-detail`" v-if="showPayload[event.key]">
+            <tr v-if="showPayload[event.key]" :key="`${event.key}-detail`">
               <td colspan="4">
                 <pre class="is-breakable" v-text="toJson(event.payload)" />
               </td>
@@ -99,9 +101,9 @@
       </table>
 
       <sba-pagination-nav
+        v-model="current"
         :page-size="pageSize"
         :page-count="pageCount"
-        v-model="current"
       />
     </div>
   </div>
@@ -109,12 +111,10 @@
 
 <script>
 import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {compareBy} from '@/utils/collections';
-import isEqual from 'lodash/isEqual';
-import uniq from 'lodash/uniq';
+import {isEqual, uniq} from 'lodash-es';
 import moment from 'moment';
-import SbaPaginationNav from '@/components/sba-pagination-nav';
 
 class Event {
   constructor({instance, version, type, timestamp, ...payload}) {
@@ -131,7 +131,6 @@ class Event {
 }
 
 export default {
-  components: {SbaPaginationNav},
   mixins: [subscribing],
   data: () => ({
     events: [],
@@ -167,6 +166,45 @@ export default {
     indexEnd() {
       return this.indexStart + (+this.pageSize);
     },
+  },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler() {
+        this.filter = this.$route.query
+      }
+    },
+    filter: {
+      deep: true,
+      immediate: true,
+      handler() {
+        if (!isEqual(this.filter, this.$route.query)) {
+          this.$router.replace({
+            name: 'journal',
+            query: this.filter
+          });
+        }
+      }
+    }
+  },
+  async created() {
+    try {
+      const response = await Instance.fetchEvents();
+      const events = response.data
+        .map((e, idx) => ({
+          ...e,
+          version: idx
+        }))
+        .sort(compareBy(v => v.timestamp))
+        .reverse()
+        .map(e => new Event(e));
+
+      this.events = Object.freeze(events);
+      this.error = null;
+    } catch (error) {
+      console.warn('Fetching events failed:', error);
+      this.error = error;
+    }
   },
   methods: {
     setPageSize(newPageSize) {
@@ -209,45 +247,6 @@ export default {
           this.error = error;
         }
       });
-    }
-  },
-  watch: {
-    '$route.query': {
-      immediate: true,
-      handler() {
-        this.filter = this.$route.query
-      }
-    },
-    filter: {
-      deep: true,
-      immediate: true,
-      handler() {
-        if (!isEqual(this.filter, this.$route.query)) {
-          this.$router.replace({
-            name: 'journal',
-            query: this.filter
-          });
-        }
-      }
-    }
-  },
-  async created() {
-    try {
-      const response = await Instance.fetchEvents();
-      const events = response.data
-        .map((e, idx) => ({
-          ...e,
-          version: idx
-        }))
-        .sort(compareBy(v => v.timestamp))
-        .reverse()
-        .map(e => new Event(e));
-
-      this.events = Object.freeze(events);
-      this.error = null;
-    } catch (error) {
-      console.warn('Fetching events failed:', error);
-      this.error = error;
     }
   },
   install({viewRegistry}) {

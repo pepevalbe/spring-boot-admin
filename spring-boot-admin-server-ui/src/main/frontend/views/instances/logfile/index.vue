@@ -16,7 +16,7 @@
 
 <template>
   <sba-instance-section :loading="!hasLoaded" :error="error">
-    <template v-slot:before>
+    <template #before>
       <sba-sticky-subnav>
         <div class="mx-6 flex items-center justify-end gap-1">
           <div class="flex-1">
@@ -26,8 +26,9 @@
 
           <div class="flex items-start">
             <div class="flex items-center h-5">
-              <input id="wraplines" name="wraplines" v-model="wrapLines" type="checkbox"
-                     class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+              <input
+                id="wraplines" v-model="wrapLines" name="wraplines" type="checkbox"
+                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
               >
             </div>
             <div class="ml-3 text-sm">
@@ -36,16 +37,18 @@
           </div>
 
           <div class="mx-3 btn-group">
-            <sba-button @click="scrollToTop" :disabled="atTop">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                   stroke="currentColor" stroke-width="2"
+            <sba-button :disabled="atTop" @click="scrollToTop">
+              <svg
+                xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
               </svg>
             </sba-button>
-            <sba-button @click="scrollToBottom" :disabled="atBottom">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                   stroke="currentColor" stroke-width="2"
+            <sba-button :disabled="atBottom" @click="scrollToBottom">
+              <svg
+                xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
               </svg>
@@ -69,28 +72,26 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import autolink from '@/utils/autolink';
 import {animationFrameScheduler, concatAll, concatMap, map, of, tap} from '@/utils/rxjs';
 import AnsiUp from 'ansi_up';
-import chunk from 'lodash/chunk';
+import {chunk} from 'lodash-es';
 import prettyBytes from 'pretty-bytes';
 import {VIEW_GROUP} from '../../index';
-import SbaInstanceSection from '@/views/instances/shell/sba-instance-section';
-import SbaStickySubnav from '@/components/sba-sticky-subnav';
-import SbaButton from '@/components/sba-button';
+import SbaInstanceSection from '@/views/instances/shell/sba-instance-section.vue';
 import subscribing from '@/mixins/subscribing';
 import {debounceTime, fromEvent} from 'rxjs';
 
 export default {
-  components: {SbaButton, SbaStickySubnav, SbaInstanceSection},
+  components: {SbaInstanceSection},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
       required: true
     }
   },
-  mixins: [subscribing],
   data: () => ({
     hasLoaded: false,
     error: null,
@@ -100,6 +101,14 @@ export default {
     wrapLines: true,
     scrollSubcription: null
   }),
+  computed: {
+    skippedBytesString() {
+      if (this.skippedBytes != null) {
+        return `skipped ${prettyBytes(this.skippedBytes)}`;
+      }
+      return '';
+    }
+  },
   created() {
     this.ansiUp = new AnsiUp();
     this.scrollSubcription = fromEvent(window, 'scroll')
@@ -112,21 +121,13 @@ export default {
         this.atBottom = document.scrollingElement.clientHeight === document.scrollingElement.scrollHeight - document.scrollingElement.scrollTop
       })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.scrollSubcription) {
       try {
         !this.scrollSubcription.closed && this.scrollSubcription.unsubscribe();
       } finally {
         this.scrollSubcription = null;
       }
-    }
-  },
-  computed: {
-    skippedBytesString() {
-      if (this.skippedBytes != null) {
-        return `skipped ${prettyBytes(this.skippedBytes)}`;
-      }
-      return '';
     }
   },
   methods: {

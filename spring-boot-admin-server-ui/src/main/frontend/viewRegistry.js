@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import sbaConfig from '@/sba-config'
+import sbaConfig from './sba-config.js'
 import {VIEW_GROUP} from './views';
+import {h} from 'vue';
 
-import remove from 'lodash/remove';
+import {remove} from 'lodash-es';
 
-const createTextVNode = (label) => {
+const createI18nTextVNode = (label) => {
   return {
     render() {
-      return this._v(this.$t(label))
+      return h('span', this.$t(label))
     }
   }
 };
@@ -62,7 +63,7 @@ export default class ViewRegistry {
 
   _addView(view) {
     if (view.label && !view.handle) {
-      view.handle = createTextVNode(view.label);
+      view.handle = createI18nTextVNode(view.label);
     }
     if (!view.group) {
       view.group = VIEW_GROUP.NONE;

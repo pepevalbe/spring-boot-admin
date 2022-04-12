@@ -1,6 +1,6 @@
 import {render} from '@/test-utils';
 import Auditevents from '@/views/instances/auditevents/index';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {screen, waitFor} from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 

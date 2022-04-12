@@ -1,28 +1,25 @@
 import {render as tlRender} from '@testing-library/vue';
-import VueI18n from 'vue-i18n';
 import components from '@/components';
-import Vue from 'vue';
 import i18n from '@/i18n';
-import VueRouter from 'vue-router';
-
-Vue.use(VueI18n);
-Vue.use(components);
-Vue.use(VueRouter);
-
-export const localVue = Vue;
+import router from '@/router';
+import views from '@/views';
+import ViewRegistry from '@/viewRegistry';
 
 export const render = (testComponent, options) => {
-  return tlRender(testComponent, options,
-    () => {
-      return {
-        stubs: {
-          'font-awesome-icon': true
-        },
-        i18n,
-        router: new VueRouter({
-          mode: 'history',
-          linkActiveClass: 'is-active',
-        }),
-      }
-    })
+  const viewRegistry = new ViewRegistry();
+  views.forEach(view => view.install({viewRegistry}));
+
+  const sbaConfigRoutes = ['/about/**', '/applications/**', '/instances/**',
+    '/journal/**', '/wallboard/**', '/external/**'];
+
+  const mergedOptions = {
+    ...options,
+    global: {
+      plugins: [i18n, router(viewRegistry.routes, sbaConfigRoutes)],
+      stubs: ['font-awesome-icon'],
+      components: components.getAsMap()
+    },
+  };
+
+  return tlRender(testComponent, mergedOptions);
 }

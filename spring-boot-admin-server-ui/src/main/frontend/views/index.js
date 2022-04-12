@@ -16,9 +16,10 @@
 
 const views = [];
 
-const context = require.context('.', true, /^\.\/.+\/index\.(js|vue)$/);
-context.keys().forEach(function (key) {
-  const defaultExport = context(key).default;
+//const context = require.context('.', true, /^\.\/.+\/index\.(js|vue)$/);
+const context = import.meta.globEager("./**/index.(js|vue)");
+Object.keys(context).forEach(function (key) {
+  const defaultExport = context[key].default;
   if (defaultExport && defaultExport.install) {
     views.push(defaultExport)
   }

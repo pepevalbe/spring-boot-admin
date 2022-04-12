@@ -16,8 +16,9 @@
 
 <template>
   <div class="application-status">
-    <font-awesome-icon :icon="icon" class="application-status__icon"
-                       :class="`application-status__icon--${status}`"
+    <font-awesome-icon
+      :icon="icon" class="application-status__icon"
+      :class="`application-status__icon--${status}`"
     />
     <small v-if="date">
       <sba-time-ago :date="date" />

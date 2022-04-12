@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <button class="button icon-button" v-on="$listeners" :title="title">
+  <button class="button icon-button" :title="title" v-on="$attrs">
     <font-awesome-icon :icon="icon" :size="size" :class="iconClass" />
   </button>
 </template>

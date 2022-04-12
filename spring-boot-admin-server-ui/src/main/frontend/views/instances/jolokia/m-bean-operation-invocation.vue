@@ -19,19 +19,19 @@
     <div class="modal-background" @click="abort" />
     <div class="modal-content">
       <div class="modal-card">
-        <header class="modal-card-head">
+        <header class="modal-card-head is-block">
           <p class="modal-card-title" v-text="name" />
         </header>
 
         <template v-if="state === 'input-args'">
           <section class="modal-card-body" @keyup.ctrl.enter="invoke(args)">
-            <div class="field" v-for="(arg, idx) in descriptor.args" :key="arg.name">
+            <div v-for="(arg, idx) in descriptor.args" :key="arg.name" class="field">
               <label class="label">
                 <span v-text="arg.name" />
-                <small class="is-muted has-text-weight-normal" v-text="arg.type" />
+                <small class="is-muted has-text-weight-normal pl-1" v-text="arg.type" />
               </label>
               <div class="control">
-                <input type="text" class="input" v-model="args[idx]">
+                <input v-model="args[idx]" type="text" class="input">
               </div>
               <p class="help" v-text="arg.desc" />
             </div>
@@ -76,19 +76,22 @@
             <div class="message is-danger">
               <div class="message-body">
                 <strong>
-                  <font-awesome-icon class="has-text-danger"
-                                     icon="exclamation-triangle"
+                  <font-awesome-icon
+                    class="has-text-danger"
+                    icon="exclamation-triangle"
                   />
                   <span v-text="$t('instances.jolokia.execution_failed')" />
                 </strong>
                 <p v-text="error.message" />
               </div>
             </div>
-            <pre v-if="error.stacktrace"
-                 v-text="error.stacktrace"
+            <pre
+              v-if="error.stacktrace"
+              v-text="error.stacktrace"
             />
-            <pre v-if="error.response && error.response.data"
-                 v-text="error.response.data"
+            <pre
+              v-if="error.response && error.response.data"
+              v-text="error.response.data"
             />
           </section>
           <footer class="modal-card-foot">
@@ -150,6 +153,15 @@
         return this.result;
       }
     },
+    created() {
+      this.invoke();
+    },
+    mounted() {
+      document.addEventListener('keyup', this.keyHandler)
+    },
+    beforeUnmount() {
+      document.removeEventListener('keyup', this.keyHandler)
+    },
     methods: {
       abort() {
         this.onClose();
@@ -168,8 +180,8 @@
         this.state = 'executing';
         try {
           const result = await this.onExecute(this.args);
-          if (result.data.status < 400) {
-            this.result = result.data.value;
+          if (result.status < 400) {
+            this.result = this.parseValue(result.data);
             this.state = 'completed';
           } else {
             const error = new Error(`Execution failed: ${result.data.error}`);
@@ -188,16 +200,26 @@
         if (event.keyCode === 27) {
           this.abort()
         }
+      },
+      parseValue(data) {
+        if (Array.isArray(data)) {
+          return data.map(elem => {
+            const parsedBody = JSON.parse(elem['body']);
+            return {
+              instanceId: elem['instanceId'],
+              value: parsedBody['value']
+            };
+          });
+        } else {
+          return data.value;
+        }
       }
-    },
-    created() {
-      this.invoke();
-    },
-    mounted() {
-      document.addEventListener('keyup', this.keyHandler)
-    },
-    beforeDestroy() {
-      document.removeEventListener('keyup', this.keyHandler)
     },
   }
 </script>
+
+<style scoped>
+.modal-card-title {
+  word-break: break-all;
+}
+</style>

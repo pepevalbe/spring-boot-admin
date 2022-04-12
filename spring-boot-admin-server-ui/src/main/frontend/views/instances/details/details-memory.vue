@@ -44,17 +44,19 @@
 </template>
 
 <script>
+import prettyBytes from 'pretty-bytes';
+import {take} from 'rxjs/operators';
 import sbaConfig from '@/sba-config'
 import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs';
 import moment from 'moment';
-import prettyBytes from 'pretty-bytes';
-import memChart from './mem-chart';
-import {take} from 'rxjs/operators';
+import memChart from './mem-chart.vue';
 
 export default {
   name: 'DetailsMemory',
+  components: { memChart},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
@@ -65,8 +67,6 @@ export default {
       required: true
     }
   },
-  mixins: [subscribing],
-  components: { memChart},
   data: () => ({
     hasLoaded: false,
     error: null,

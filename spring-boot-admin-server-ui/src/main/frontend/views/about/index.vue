@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import SbaButton from '@/components/sba-button';
+import SbaButton from '@/components/sba-button.vue';
 
 export default {
   components: {SbaButton},

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {compareBy} from '@/utils/collections';
 
 const globalFilterHasKeyword = (globalFilter, keyword) => {
@@ -87,15 +87,15 @@ export default {
   data: () => ({
     isLoading: false,
     error: null,
-    _globalFilters: [],
+    $globalFilters: [],
     filterCriteria: null,
   }),
   computed: {
     globalFilters() {
       if (!this.filterCriteria) {
-        return sortGlobalFilter(this.$data._globalFilters);
+        return sortGlobalFilter(this.$data.$globalFilters);
       }
-      const filtered = this.$data._globalFilters.filter(globalFilter => globalFilterHasKeyword(globalFilter, this.filterCriteria.toLowerCase()));
+      const filtered = this.$data.$globalFilters.filter(globalFilter => globalFilterHasKeyword(globalFilter, this.filterCriteria.toLowerCase()));
       return sortGlobalFilter(filtered);
     }
   },
@@ -108,7 +108,7 @@ export default {
       this.isLoading = true;
       try {
         const response = await this.instance.fetchGatewayGlobalFilters();
-        this.$data._globalFilters = Object.entries(response.data).map(([name, order]) => {
+        this.$data.$globalFilters = Object.entries(response.data).map(([name, order]) => {
           const [className, objectId] = name.split('@');
           return {
             name: className,

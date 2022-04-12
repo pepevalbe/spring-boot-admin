@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import SbaNavbar from '@/shell/navbar';
+import SbaNavbar from './navbar.vue';
 export default {
   components: {SbaNavbar},
   props: {

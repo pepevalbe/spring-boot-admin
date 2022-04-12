@@ -94,5 +94,4 @@ library.add(
   faGithub,
   faGitter,
   faStackOverflow
-)
-;
+);

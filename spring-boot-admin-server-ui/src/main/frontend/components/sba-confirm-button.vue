@@ -15,8 +15,8 @@
   -->
 
 <template>
-  <sba-button @click="click" :class="{ 'is-warning' : confirm }" v-on-clickaway="abort">
-    <slot name="confirm" v-if="confirm">
+  <sba-button v-on-clickaway="abort" :class="{ 'is-warning' : confirm }" @click="click">
+    <slot v-if="confirm" name="confirm">
       <div v-text="$t('term.confirm')" />
     </slot>
     <slot v-else />
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import {directive as onClickaway} from 'vue-clickaway2';
+  import {directive as onClickaway} from 'vue3-click-away';
 
   export default {
     directives: {onClickaway},

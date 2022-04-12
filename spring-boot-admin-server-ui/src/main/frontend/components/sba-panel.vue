@@ -23,7 +23,7 @@
     >
       <h3 class="text-lg leading-6 font-medium text-gray-900">
         <span v-text="title" />&nbsp;
-        <span v-if="subtitle" v-text="subtitle" class="text-sm text-gray-500" />
+        <span v-if="subtitle" class="text-sm text-gray-500" v-text="subtitle" />
         <slot v-if="'title' in $slots" name="title" />
       </h3>
 
@@ -45,7 +45,7 @@
 
 <script>
   import sticksBelow from '@/directives/sticks-below';
-  import SbaIconButton from './sba-icon-button';
+  import SbaIconButton from './sba-icon-button.vue';
 
   export default {
     components: {SbaIconButton},

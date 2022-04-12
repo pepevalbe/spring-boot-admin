@@ -16,23 +16,23 @@
 
 <template>
   <sba-instance-section :loading="!hasLoaded " :error="error">
-    <template v-slot:before>
+    <template #before>
       <sba-sticky-subnav>
         <div class="mx-6 flex gap-2">
           <sba-toggle-scope-button
             v-if="instanceCount >= 1"
             v-model="scope"
-            @changeScope="$emit('changeScope', $event)"
             :show-info="false"
             :instance-count="instanceCount"
+            @changeScope="$emit('changeScope', $event)"
           />
 
           <div class="flex-1">
-            <sba-input name="filter" v-model="filter.name" type="search" :placeholder="$t('term.filter')">
-              <template v-slot:prepend>
+            <sba-input v-model="filter.name" name="filter" type="search" :placeholder="$t('term.filter')">
+              <template #prepend>
                 <font-awesome-icon icon="filter" />
               </template>
-              <template v-slot:append>
+              <template #append>
                 <span v-text="filteredLoggers.length" /> / <span v-text="loggerConfig.loggers.length" />
               </template>
             </sba-input>
@@ -42,8 +42,9 @@
           <div>
             <div class="flex items-start">
               <div class="flex items-center h-5">
-                <input id="classOnly" name="wraplines" v-model="filter.classOnly" type="checkbox"
-                       class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                <input
+                  id="classOnly" v-model="filter.classOnly" name="wraplines" type="checkbox"
+                  class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                 >
               </div>
               <div class="ml-3 text-sm">
@@ -53,8 +54,9 @@
 
             <div class="flex items-start">
               <div class="flex items-center h-5">
-                <input id="configuredOnly" name="wraplines" v-model="filter.configuredOnly" type="checkbox"
-                       class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                <input
+                  id="configuredOnly" v-model="filter.configuredOnly" name="wraplines" type="checkbox"
+                  class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                 >
               </div>
               <div class="ml-3 text-sm">
@@ -90,11 +92,8 @@
 <script>
 import sticksBelow from '@/directives/sticks-below';
 import {finalize, from, listen} from '@/utils/rxjs';
-import LoggersList from './loggers-list';
-import SbaToggleScopeButton from '@/components/sba-toggle-scope-button';
-import SbaInstanceSection from '@/views/instances/shell/sba-instance-section';
-import SbaStickySubnav from '@/components/sba-sticky-subnav';
-import SbaPanel from '@/components/sba-panel';
+import SbaInstanceSection from "../shell/sba-instance-section.vue";
+import LoggersList from "./loggers-list.vue";
 
 const isClassName = name => /\.[A-Z]/.test(name);
 
@@ -118,7 +117,7 @@ const addLoggerCreationEntryIfLoggerNotPresent = (nameFilter, loggers) => {
 };
 
 export default {
-  components: {SbaPanel, SbaStickySubnav, SbaInstanceSection, SbaToggleScopeButton, LoggersList},
+  components: {SbaInstanceSection, LoggersList},
   directives: {sticksBelow},
   props: {
     instanceCount: {

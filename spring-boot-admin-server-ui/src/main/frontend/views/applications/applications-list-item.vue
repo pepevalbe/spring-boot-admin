@@ -17,13 +17,13 @@
 <template>
   <div>
     <sba-modal v-model="isModalShutdownApplicationOpen">
-      <template v-slot:header>
+      <template #header>
         <span>shutdown endpoint</span>
       </template>
-      <template v-slot:body>
+      <template #body>
         <span v-html="$t('applications.shutdown', {name: application.name})" />
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <button class="button is-success" @click="shutdownApplication(application)">
           OK
         </button>
@@ -34,13 +34,13 @@
     </sba-modal>
 
     <sba-modal v-model="isModalRestartApplicationOpen">
-      <template v-slot:header>
+      <template #header>
         <span>restart endpoint</span>
       </template>
-      <template v-slot:body>
+      <template #body>
         <span v-html="$t('applications.restart', {name: application.name})" />
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <button class="button is-success" @click="restartApplication(application)">
           OK
         </button>
@@ -51,13 +51,13 @@
     </sba-modal>
 
     <sba-modal v-model="isApplicationRestarted">
-      <template v-slot:header>
+      <template #header>
         <span>restart endpoint</span>
       </template>
-      <template v-slot:body>
+      <template #body>
         <span v-html="$t('applications.restarted', {name: application.name})" />
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <button class="button is-success" @click="closeModal">
           OK
         </button>
@@ -65,7 +65,7 @@
     </sba-modal>
 
     <div class="application-list-item card bg-white px-6 py-3" :class="{'is-active': isExpanded}">
-      <header class="hero application-list-item__header" :class="headerClass" v-on="$listeners">
+      <header class="hero application-list-item__header" :class="headerClass" v-on="$attrs">
         <application-summary v-if="!isExpanded" :application="application" />
         <h1 v-else class="title is-size-5" v-text="application.name" />
         <div class="application-list-item__header__actions" @click.stop="">
@@ -77,15 +77,15 @@
             <font-awesome-icon icon="history" />
           </router-link>
           <sba-icon-button
-            :id="`nf-settings-${application.name}`"
             v-if="hasNotificationFiltersSupport"
-            @click="$emit('toggle-notification-filter-settings', application)"
+            :id="`nf-settings-${application.name}`"
             :icon="hasActiveNotificationFilter(application) ? 'bell-slash' : 'bell'"
+            @click="$emit('toggle-notification-filter-settings', application)"
           />
           <sba-icon-button
+            v-if="application.isUnregisterable"
             icon="trash"
             title="unregister"
-            v-if="application.isUnregisterable"
             @click="$emit('unregister', application)"
           />
           <sba-icon-button
@@ -103,15 +103,15 @@
         </div>
       </header>
 
-      <div class="card-content" v-if="isExpanded">
+      <div v-if="isExpanded" class="card-content">
         <sba-modal v-model="isModalShutdownInstanceOpen">
-          <template v-slot:header>
+          <template #header>
             <span>shutdown endpoint</span>
           </template>
-          <template v-slot:body>
+          <template #body>
             <span v-html="$t('instances.shutdown', {name: currentModalInstance.id})" />
           </template>
-          <template v-slot:footer>
+          <template #footer>
             <button class="button is-success" @click="shutdownInstance">
               OK
             </button>
@@ -122,13 +122,13 @@
         </sba-modal>
 
         <sba-modal v-model="isModalRestartInstanceOpen">
-          <template v-slot:header>
+          <template #header>
             <span>restart endpoint</span>
           </template>
-          <template v-slot:body>
+          <template #body>
             <span v-html="$t('instances.restart', {name: currentModalInstance.id})" />
           </template>
-          <template v-slot:footer>
+          <template #footer>
             <button class="button is-success" @click="restartInstance">
               OK
             </button>
@@ -139,13 +139,13 @@
         </sba-modal>
 
         <sba-modal v-model="isInstanceRestarted">
-          <template v-slot:header>
+          <template #header>
             <span>restart endpoint</span>
           </template>
-          <template v-slot:body>
+          <template #body>
             <span v-html="$t('instances.restarted')" />
           </template>
-          <template v-slot:footer>
+          <template #footer>
             <button class="button is-success" @click="closeModal">
               OK
             </button>
@@ -153,26 +153,30 @@
         </sba-modal>
 
         <instances-list :instances="application.instances">
-          <template slot="actions" slot-scope="{instance}">
-            <sba-icon-button :id="`nf-settings-${instance.id}`"
-                             v-if="hasNotificationFiltersSupport"
-                             @click.stop="$emit('toggle-notification-filter-settings', instance)"
-                             :icon="hasActiveNotificationFilter(instance) ? 'bell-slash' : 'bell'"
+          <template #actions="{instance}">
+            <sba-icon-button
+              v-if="hasNotificationFiltersSupport"
+              :id="`nf-settings-${instance.id}`"
+              :icon="hasActiveNotificationFilter(instance) ? 'bell-slash' : 'bell'"
+              @click.stop="$emit('toggle-notification-filter-settings', instance)"
             />
-            <sba-icon-button icon="trash"
-                             title="unregister"
-                             v-if="instance.isUnregisterable"
-                             @click.stop="$emit('unregister', instance)"
+            <sba-icon-button
+              v-if="instance.isUnregisterable"
+              icon="trash"
+              title="unregister"
+              @click.stop="$emit('unregister', instance)"
             />
-            <sba-icon-button v-if="instance.hasEndpoint('shutdown')"
-                             :icon="['far', 'stop-circle']"
-                             title="shutdown"
-                             @click.stop="confirmShutdownInstance(instance)"
+            <sba-icon-button
+              v-if="instance.hasEndpoint('shutdown')"
+              :icon="['far', 'stop-circle']"
+              title="shutdown"
+              @click.stop="confirmShutdownInstance(instance)"
             />
-            <sba-icon-button v-if="instance.hasEndpoint('restart')"
-                             icon="sync-alt"
-                             title="restart"
-                             @click.stop="confirmRestartInstance(instance)"
+            <sba-icon-button
+              v-if="instance.hasEndpoint('restart')"
+              icon="sync-alt"
+              title="restart"
+              @click.stop="confirmRestartInstance(instance)"
             />
           </template>
         </instances-list>
@@ -181,9 +185,10 @@
   </div>
 </template>
 <script>
-import Application from '@/services/application';
-import ApplicationSummary from './application-summary';
-import InstancesList from './instances-list';
+import Application from '@/services/application.js';
+import ApplicationSummary from './application-summary.vue';
+import InstancesList from './instances-list.vue';
+import {HealthStatus} from '@/healthStatus';
 
 export default {
   components: {ApplicationSummary, InstancesList},
@@ -221,19 +226,19 @@ export default {
       if (!this.isExpanded) {
         return 'is-selectable';
       }
-      if (this.application.status === 'UP') {
+      if (this.application.status === HealthStatus.UP) {
         return 'is-primary';
       }
-      if (this.application.status === 'RESTRICTED') {
+      if (this.application.status === HealthStatus.RESTRICTED) {
         return 'is-warning';
       }
-      if (this.application.status === 'DOWN') {
+      if (this.application.status === HealthStatus.DOWN) {
         return 'is-danger';
       }
-      if (this.application.status === 'OUT_OF_SERVICE') {
+      if (this.application.status === HealthStatus.OUT_OF_SERVICE) {
         return 'is-danger';
       }
-      if (this.application.status === 'OFFLINE') {
+      if (this.application.status === HealthStatus.OFFLINE) {
         return 'is-light';
       }
       return 'is-light';

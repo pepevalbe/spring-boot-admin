@@ -34,12 +34,12 @@
 </template>
 
 <script>
-  import InstanceSidebar from './sidebar';
-  import WaveBackground from '!raw-loader!../../../assets/img/wave.svg'
-  import SbaWave from '@/components/sba-wave';
+  import InstanceSidebar from './sidebar.vue';
+  import WaveBackground from '../../../assets/img/wave.svg?raw'
+  import {findApplicationForInstance, findInstance} from "../../../store.js";
 
   export default {
-    components: {SbaWave, InstanceSidebar},
+    components: {InstanceSidebar},
     props: {
       instanceId: {
         type: String,
@@ -65,10 +65,10 @@
     },
     computed: {
       instance() {
-        return this.applications.findInstance(this.instanceId);
+        return findInstance(this.applications, this.instanceId);
       },
       application() {
-        return this.applications.findApplicationForInstance(this.instanceId);
+        return findApplicationForInstance(this.applications, this.instanceId);
       }
     },
     install({viewRegistry}) {

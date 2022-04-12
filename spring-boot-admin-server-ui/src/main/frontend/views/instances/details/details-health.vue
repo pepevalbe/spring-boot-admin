@@ -16,7 +16,7 @@
 
 <template>
   <sba-panel :title="$t('instances.details.health.title')">
-    <template v-slot:actions>
+    <template #actions>
       <router-link
         :to="{ name: 'journal', query: { 'instanceId' : instance.id } }"
         class="text-sm inline-flex items-center leading-sm border border-gray-400 bg-white text-gray-700 rounded overflow-hidden px-3 py-1 hover:bg-gray-200 ml-1"
@@ -35,28 +35,28 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import healthDetails from './health-details';
+import Instance from '@/services/instance.js';
+import healthDetails from './health-details.vue';
 
 export default {
+  components: {healthDetails},
   props: {
     instance: {
       type: Instance,
       required: true
     }
   },
-  components: {healthDetails},
   data: () => ({
     error: null,
     liveHealth: null,
   }),
-  created() {
-    this.fetchHealth();
-  },
   computed: {
     health() {
       return this.liveHealth || this.instance.statusInfo;
     }
+  },
+  created() {
+    this.fetchHealth();
   },
   methods: {
     async fetchHealth() {

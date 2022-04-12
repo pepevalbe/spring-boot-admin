@@ -20,7 +20,7 @@ import ApplicationListItem from './applications-list-item';
 import {applications} from '../../mocks/applications/data';
 import {screen, waitFor} from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
-import _ from 'lodash';
+import _ from 'lodash-es';
 
 describe('application-list-item.vue', () => {
   let application;

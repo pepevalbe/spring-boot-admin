@@ -15,14 +15,14 @@
   -->
 
 <template>
-  <sba-instance-section :error="error">
+  <sba-instance-section :error="error" :loading="!hasLoaded">
     <sba-panel v-if="!isOldMetrics && availableMetrics.length > 0">
       <form class="grid grid-cols-6 gap-6">
         <div class="col-span-3">
           <div>
             <label for="metric" class="block text-sm font-medium text-gray-700" v-text="$t('instances.metrics.label')" />
             <div class="mt-1 relative rounded-md shadow-sm">
-              <select v-model="selectedMetric" id="metric" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+              <select id="metric" v-model="selectedMetric" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
                 <option v-for="metric in availableMetrics" :key="metric" v-text="metric" />
               </select>
             </div>
@@ -33,7 +33,7 @@
             <div v-for="tag in availableTags" :key="tag.tag">
               <label for="metric2" class="block text-sm font-medium text-gray-700">{{ tag.tag }}</label>
               <div class="mt-1 relative rounded-md shadow-sm">
-                <select v-model="selectedTags[tag.tag]" id="metric2" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                <select id="metric2" v-model="selectedTags[tag.tag]" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
                   <option :value="undefined">
                     -
                   </option>
@@ -45,7 +45,7 @@
         </div>
       </form>
 
-      <template v-slot:footer>
+      <template #footer>
         <div class="text-right">
           <sba-button type="primary" @click="handleSubmit">
             {{ $t('instances.metrics.add_metric') }}
@@ -56,25 +56,26 @@
 
     <p v-if="stateFetchingTags === 'executing'" class="is-loading" v-text="$t('instances.metrics.fetching_tags')" />
 
-    <metric v-for="(metric, index) in metrics"
-            :key="metric.name"
-            :index="index"
-            :instance="instance"
-            :metric-name="metric.name"
-            :statistic-types="metric.types"
-            :tag-selections="metric.tagSelections"
-            @remove="removeMetric"
-            @type-select="handleTypeSelect"
+    <metric
+      v-for="(metric, index) in metrics"
+      :key="metric.name"
+      :index="index"
+      :instance="instance"
+      :metric-name="metric.name"
+      :statistic-types="metric.types"
+      :tag-selections="metric.tagSelections"
+      @remove="removeMetric"
+      @type-select="handleTypeSelect"
     />
   </sba-instance-section>
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import sortBy from 'lodash/sortBy';
-import Metric from './metric';
-import {VIEW_GROUP} from '../../index';
-import SbaInstanceSection from '@/views/instances/shell/sba-instance-section';
+import {sortBy} from 'lodash-es';
+import Instance from '@/services/instance.js';
+import Metric from './metric.vue';
+import {VIEW_GROUP} from '../../index.js';
+import SbaInstanceSection from '@/views/instances/shell/sba-instance-section.vue';
 
 export default {
   components: {SbaInstanceSection, Metric},
@@ -92,12 +93,9 @@ export default {
     stateFetchingTags: null,
     availableTags: null,
     selectedTags: null,
-    isOldMetrics: false
+    isOldMetrics: false,
+    hasLoaded: false
   }),
-  created() {
-    this.fetchMetricIndex();
-    this.metrics = this.loadMetrics();
-  },
   watch: {
     selectedMetric: 'fetchAvailableTags',
     metrics: {
@@ -106,6 +104,10 @@ export default {
         this.persistMetrics(value);
       }
     }
+  },
+  created() {
+    this.fetchMetricIndex();
+    this.metrics = this.loadMetrics();
   },
   methods: {
     handleSubmit() {
@@ -171,8 +173,9 @@ export default {
         }
       } catch (error) {
         console.warn('Fetching metric index failed:', error);
-        this.hasLoaded = true;
         this.error = error;
+      } finally {
+        this.hasLoaded = true;
       }
     },
     async fetchAvailableTags(metricName) {

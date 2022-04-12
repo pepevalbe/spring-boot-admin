@@ -22,9 +22,10 @@
           <span v-html="$t('applications.suppress_notifications_on', {name: object.id || object.name})" />&nbsp;
           <span class="select">
             <select v-model="ttl" @click.stop>
-              <option v-for="option in ttlOptions"
-                      :key="`ttl-instance-${option.value}`"
-                      :value="option.value" v-text="option.label"
+              <option
+                v-for="option in ttlOptions"
+                :key="`ttl-instance-${option.value}`"
+                :value="option.value" v-text="option.label"
               />
             </select>
           </span>
@@ -32,8 +33,9 @@
       </div>
       <div class="field is-grouped is-grouped-right">
         <div class="control">
-          <button class="button is-warning" :class="{'is-loading' : actionState === 'executing'}"
-                  @click.stop="addFilter"
+          <button
+            class="button is-warning" :class="{'is-loading' : actionState === 'executing'}"
+            @click.stop="addFilter"
           >
             <font-awesome-icon icon="bell-slash" />&nbsp;<span v-text="$t('term.suppress')" />
           </button>

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Application from '@/services/application';
+import Application from '@/services/application.js';
 import {EMPTY} from '@/utils/rxjs';
-import Store from './store';
+import Store from './store.js';
 
-jest.mock('@/services/application');
+jest.mock('@/services/application.js');
 jest.setTimeout(500);
 
 describe('store', () => {

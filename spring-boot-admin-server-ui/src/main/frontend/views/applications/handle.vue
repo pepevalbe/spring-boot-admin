@@ -16,7 +16,7 @@
 
 <template>
   <span>
-    <span class="has-text-warning" v-if="error">
+    <span v-if="error" class="has-text-warning">
       <font-awesome-icon icon="exclamation-triangle" />
     </span>
     <span :class="{ 'has-badge has-badge-rounded has-badge-danger' : downCount > 0 }" :data-badge="downCount > 0 ? downCount : undefined" v-text="$t('applications.label')" />
@@ -27,10 +27,6 @@
   import sbaConfig from '@/sba-config'
 
   export default {
-    data: () => ({
-      favicon: 'assets/img/favicon.png',
-      faviconDanger: 'assets/img/favicon-danger.png',
-    }),
     props: {
       applications: {
         type: Array,
@@ -41,6 +37,10 @@
         default: null
       }
     },
+    data: () => ({
+      favicon: 'assets/img/favicon.png',
+      faviconDanger: 'assets/img/favicon-danger.png',
+    }),
     computed: {
       downCount() {
         return this.applications.reduce((current, next) => {
@@ -48,16 +48,16 @@
         }, 0);
       }
     },
-    created() {
-      this.favicon = sbaConfig.uiSettings.favicon;
-      this.faviconDanger = sbaConfig.uiSettings.faviconDanger;
-    },
     watch: {
       downCount(newVal, oldVal) {
         if ((newVal === 0) !== (oldVal === 0)) {
           this.updateFavicon(newVal === 0);
         }
       }
+    },
+    created() {
+      this.favicon = sbaConfig.uiSettings.favicon;
+      this.faviconDanger = sbaConfig.uiSettings.faviconDanger;
     },
     methods: {
       updateFavicon(up) {

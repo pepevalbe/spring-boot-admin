@@ -17,7 +17,7 @@
 <template>
   <section :class="{ 'is-loading' : !hasLoaded}" class="section">
     <template v-if="hasLoaded">
-      <sba-alert v-if="error" :error="error" :title="$t('instances.httptrace.fetching_failed')" />
+      <sba-alert v-if="error" :error="error" :title="$t('instances.httptrace.fetching_failed')"/>
 
       <template v-if="hasLoaded">
         <div class="field is-horizontal">
@@ -31,20 +31,20 @@
                   type="search"
                 >
                 <span class="icon is-small is-left">
-                  <font-awesome-icon icon="filter" />
+                  <font-awesome-icon icon="filter"/>
                 </span>
               </p>
               <p class="control">
                 <span class="button is-static">
-                  <span v-text="filteredTraces.length" />
+                  <span v-text="filteredTraces.length"/>
                   /
-                  <span v-text="traces.length" />
+                  <span v-text="traces.length"/>
                 </span>
               </p>
             </div>
             <div class="field is-narrow has-addons">
               <p class="control">
-                <span class="button is-static" v-text="$t('instances.httptrace.limit')" />
+                <span class="button is-static" v-text="$t('instances.httptrace.limit')"/>
               </p>
               <p class="control">
                 <input v-model="limit" class="input httptraces__limit" min="0" placeholder="trace limit" type="number">
@@ -57,7 +57,7 @@
             <div class="control">
               <label class="checkbox">
                 <input v-model="filter.showSuccess" type="checkbox">
-                <span v-text="$t('instances.httptrace.filter.success')" />
+                <span v-text="$t('instances.httptrace.filter.success')"/>
               </label>
             </div>
           </div>
@@ -65,7 +65,7 @@
             <div class="control">
               <label class="checkbox">
                 <input v-model="filter.showClientErrors" type="checkbox">
-                <span v-text="$t('instances.httptrace.filter.client_errors')" />
+                <span v-text="$t('instances.httptrace.filter.client_errors')"/>
               </label>
             </div>
           </div>
@@ -73,7 +73,7 @@
             <div class="control">
               <label class="checkbox">
                 <input v-model="filter.showServerErrors" type="checkbox">
-                <span v-text="$t('instances.httptrace.filter.server_errors')" />
+                <span v-text="$t('instances.httptrace.filter.server_errors')"/>
               </label>
             </div>
           </div>
@@ -81,12 +81,12 @@
             <div class="control">
               <label class="checkbox">
                 <input v-model="filter.excludeActuator" type="checkbox">
-                <span v-text="$t('instances.httptrace.filter.exclude_actuator', {actuator: actuatorPath})" />
+                <span v-text="$t('instances.httptrace.filter.exclude_actuator', {actuator: actuatorPath})"/>
               </label>
             </div>
           </div>
         </div>
-        <sba-traces-chart :traces="filteredTraces" @selected="updateSelection" />
+        <sba-traces-chart :traces="filteredTraces" @selected="updateSelection"/>
         <sba-traces-list
           :new-traces-count="newTracesCount"
           :traces="listedTraces"
@@ -98,16 +98,15 @@
 </template>
 
 <script>
-import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
-import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs';
-import debounce from 'lodash/debounce';
-import mapKeys from 'lodash/mapKeys';
-import moment from 'moment';
-import {VIEW_GROUP} from '../../index';
-import sbaTracesChart from './traces-chart';
-import sbaTracesList from './traces-list';
+import subscribing from '@/mixins/subscribing.js';
+import Instance from '@/services/instance.js';
+import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs.js';
+import {debounce, mapKeys} from 'lodash-es';
 import {take} from 'rxjs/operators';
+import moment from 'moment';
+import {VIEW_GROUP} from '../../index.js';
+import sbaTracesChart from './traces-chart.vue';
+import sbaTracesList from './traces-list.vue';
 
 const addToFilter = (oldFilter, addedFilter) =>
   !oldFilter
@@ -183,14 +182,14 @@ class Trace {
 }
 
 export default {
+  components: {sbaTracesList, sbaTracesChart},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
       required: true
     }
   },
-  mixins: [subscribing],
-  components: {sbaTracesList, sbaTracesChart},
   data: () => ({
     hasLoaded: false,
     error: null,

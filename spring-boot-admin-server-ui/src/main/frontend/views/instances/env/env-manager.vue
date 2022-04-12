@@ -15,34 +15,37 @@
   -->
 
 <template>
-  <sba-panel :header-sticks-below="['#navigation']"
-             :title="$t('instances.env.manager')"
+  <sba-panel
+    :header-sticks-below="['#navigation']"
+    :title="$t('instances.env.manager')"
   >
     <datalist id="allPropertyNames">
       <option v-for="name in allPropertyNames" :key="name" v-text="name" />
     </datalist>
-    <div class="grid grid-cols-6 gap-6" v-for="(prop, index) in managedProperties" :key="`managed-${index}`">
+    <div v-for="(prop, index) in managedProperties" :key="`managed-${index}`" class="grid grid-cols-6 gap-6">
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <sba-input class="input" type="text" placeholder="Property name" list="allPropertyNames" :name="prop.name"
-                       v-model="prop.name" @input="handlePropertyNameChange(prop, index)"
+            <sba-input
+              v-model="prop.name" class="input" type="text" placeholder="Property name" list="allPropertyNames"
+              :name="prop.name" @input="handlePropertyNameChange(prop, index)"
             />
           </div>
           <p class="help is-danger" v-text="prop.validation" />
         </div>
         <div class="field">
           <div class="control has-icons-right" :class="{'is-loading' : prop.status === 'executing'}">
-            <sba-input class="input" type="text" placeholder="Value" v-model="prop.input" :name="prop.name"
-                       @input="prop.status = null"
+            <sba-input
+              v-model="prop.input" class="input" type="text" placeholder="Value" :name="prop.name"
+              @input="prop.status = null"
             />
-            <span class="icon is-right has-text-success" v-if="prop.status === 'completed'">
+            <span v-if="prop.status === 'completed'" class="icon is-right has-text-success">
               <font-awesome-icon icon="check" />
             </span>
-            <span class="icon is-right has-text-warning" v-else-if="prop.status === 'failed'">
+            <span v-else-if="prop.status === 'failed'" class="icon is-right has-text-warning">
               <font-awesome-icon icon="exclamation-triangle" />
             </span>
-            <span class="icon is-right" v-else-if="prop.input !== prop.value">
+            <span v-else-if="prop.input !== prop.value" class="icon is-right">
               <font-awesome-icon icon="pencil-alt" />
             </span>
           </div>
@@ -53,24 +56,26 @@
       <div class="field-body">
         <div class="field is-grouped is-grouped-right">
           <div class="control">
-            <button class="button is-light"
-                    :class="{'is-loading' : resetStatus === 'executing', 'is-danger' : resetStatus === 'failed', 'is-success' : resetStatus === 'completed'}"
-                    :disabled="!hasManagedProperty || resetStatus === 'executing'"
-                    @click="resetEnvironment"
+            <button
+              class="button is-light"
+              :class="{'is-loading' : resetStatus === 'executing', 'is-danger' : resetStatus === 'failed', 'is-success' : resetStatus === 'completed'}"
+              :disabled="!hasManagedProperty || resetStatus === 'executing'"
+              @click="resetEnvironment"
             >
               <span v-if="resetStatus === 'completed'" v-text="$t('instances.env.context_resetted')" />
               <span v-else-if="resetStatus === 'failed'" v-text="$t('instances.env.context_reset_failed')" />
               <span v-else v-text="$t('instances.env.context_reset')" />
             </button>
           </div>
-          <div class="control" v-if="application.instances.length > 1">
-            <sba-toggle-scope-button :instance-count="application.instances.length" v-model="scope" />
+          <div v-if="application.instances.length > 1" class="control">
+            <sba-toggle-scope-button v-model="scope" :instance-count="application.instances.length" />
           </div>
           <div class="control">
-            <button class="button is-primary"
-                    :class="{'is-loading' : updateStatus === 'executing', 'is-danger' : updateStatus === 'failed', 'is-success' : updateStatus === 'completed'}"
-                    :disabled="hasErrorProperty || !hasChangedProperty || updateStatus === 'executing'"
-                    @click="updateEnvironment"
+            <button
+              class="button is-primary"
+              :class="{'is-loading' : updateStatus === 'executing', 'is-danger' : updateStatus === 'failed', 'is-success' : updateStatus === 'completed'}"
+              :disabled="hasErrorProperty || !hasChangedProperty || updateStatus === 'executing'"
+              @click="updateEnvironment"
             >
               <span v-if="updateStatus === 'completed'" v-text="$t('instances.env.context_updated')" />
               <span v-else-if="updateStatus === 'failed'" v-text="$t('instances.env.context_update_failed')" />
@@ -86,7 +91,7 @@
         <div>
           <label for="metric" class="block text-sm font-medium text-gray-700" v-text="$t('instances.metrics.label')" />
           <div class="mt-1 relative rounded-md shadow-sm">
-            <select v-model="selectedMetric" id="metric" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+            <select id="metric" v-model="selectedMetric" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
               <option v-for="metric in availableMetrics" :key="metric" v-text="metric" />
             </select>
           </div>
@@ -97,7 +102,7 @@
           <div v-for="tag in availableTags" :key="tag.tag">
             <label for="metric2" class="block text-sm font-medium text-gray-700">{{ tag.tag }}</label>
             <div class="mt-1 relative rounded-md shadow-sm">
-              <select v-model="selectedTags[tag.tag]" id="metric2" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+              <select id="metric2" v-model="selectedTags[tag.tag]" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
                 <option :value="undefined">
                   -
                 </option>
@@ -112,16 +117,12 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {concatMap, filter, from, listen} from '@/utils/rxjs';
-import debounce from 'lodash/debounce';
-import uniq from 'lodash/uniq';
-import Application from '@/services/application';
-import SbaToggleScopeButton from '@/components/sba-toggle-scope-button';
-import SbaInput from '@/components/sba-input';
+import {debounce, uniq} from 'lodash-es';
+import Application from '@/services/application.js';
 
 export default {
-  components: {SbaInput, SbaToggleScopeButton},
   props: {
     application: {
       type: Application,

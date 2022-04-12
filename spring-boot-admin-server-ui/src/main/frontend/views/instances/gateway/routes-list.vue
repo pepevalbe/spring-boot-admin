@@ -24,18 +24,19 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="route in routes">
-        <tr class="is-selectable"
-            :key="route.route_id"
-            @click="showDetails[route.route_id] ? $delete(showDetails, route.route_id) : $set(showDetails, route.route_id, true)"
+      <template v-for="route in routes" :key="route.route_id">
+        <tr
+          class="is-selectable"
+          @click="showDetails[route.route_id] ? $delete(showDetails, route.route_id) : $set(showDetails, route.route_id, true)"
         >
           <td class="is-breakable" v-text="route.route_id" />
           <td v-text="route.order" />
           <td class="routes__delete-action">
-            <sba-confirm-button class="button refresh-button is-light"
-                                :class="{'is-loading' : deleting[route.route_id] === 'executing', 'is-danger' : deleting[route.route_id] === 'failed', 'is-info' : deleting[route.route_id] === 'completed'}"
-                                :disabled="deleting[route.route_id] === 'executing'"
-                                @click.stop="deleteRoute(route.route_id)"
+            <sba-confirm-button
+              class="button refresh-button is-light"
+              :class="{'is-loading' : deleting[route.route_id] === 'executing', 'is-danger' : deleting[route.route_id] === 'failed', 'is-info' : deleting[route.route_id] === 'completed'}"
+              :disabled="deleting[route.route_id] === 'executing'"
+              @click.stop="deleteRoute(route.route_id)"
             >
               <span v-if="deleting[route.route_id] === 'completed'" v-text="$t('instances.gateway.route.deleted')" />
               <span v-else-if="deleting[route.route_id] === 'failed'" v-text="$t('instances.gateway.route.delete_failed')" />
@@ -58,8 +59,8 @@
             />
             <pre
               v-else-if="route.route_object"
-              v-text="toJson(route.route_object)"
               class="is-breakable"
+              v-text="toJson(route.route_object)"
             />
             <span
               v-else
@@ -79,10 +80,10 @@
   </table>
 </template>
 <script>
-  import Instance from '@/services/instance';
+  import Instance from '@/services/instance.js';
   import {from, listen} from '@/utils/rxjs';
-  import Route from './route'
-  import RouteDefinition from './route-definition'
+  import Route from './route.vue'
+  import RouteDefinition from './route-definition.vue'
 
   export default {
     components: {RouteDefinition, Route},

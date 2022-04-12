@@ -26,11 +26,12 @@
           <p v-text="error.message" />
         </div>
       </div>
-      <template v-for="(context, ctxName) in contexts">
-        <h3 class="title" v-text="ctxName" :key="ctxName" />
-        <template v-for="(report, name) in context.liquibaseBeans">
-          <sba-panel :key="`${ctxName}-${name}`" :title="`name`" class="change-set"
-                     :header-sticks-below="['#navigation']"
+      <template v-for="(context, ctxName) in contexts" :key="ctxName">
+        <h3 class="title" v-text="ctxName" />
+        <template v-for="(report, name) in context.liquibaseBeans" :key="`${ctxName}-${name}`">
+          <sba-panel
+            :title="`name`" class="change-set"
+            :header-sticks-below="['#navigation']"
           >
             <table class="table is-hoverable is-fullwidth">
               <thead>
@@ -44,20 +45,22 @@
                 </tr>
               </thead>
               <tbody>
-                <template v-for="changeSet in report.changeSets">
-                  <tr :key="`${ctxName}-${name}-${changeSet.id}`" class="is-selectable"
-                      @click="showDetails[changeSet.checksum] ? $delete(showDetails, changeSet.checksum) : $set(showDetails, changeSet.checksum, true)"
+                <template v-for="changeSet in report.changeSets" :key="`${ctxName}-${name}-${changeSet.id}`">
+                  <tr
+                    class="is-selectable"
+                    @click="showDetails[changeSet.checksum] ? $delete(showDetails, changeSet.checksum) : $set(showDetails, changeSet.checksum, true)"
                   >
                     <td v-text="changeSet.id" />
                     <td>
-                      <span v-text="changeSet.execType" class="tag" :class="execClass(execType)" />
+                      <span class="tag" :class="execClass(execType)" v-text="changeSet.execType" />
                     </td>
                     <td class="is-breakable" v-text="changeSet.description" />
                     <td v-text="changeSet.tag" />
                     <td v-text="changeSet.contexts.join(', ')" />
                     <td>
-                      <span v-for="label in changeSet.labels" :key="`${ctxName}-${name}-${changeSet.id}-${label}`"
-                            class="tag is-info" v-text="label"
+                      <span
+                        v-for="label in changeSet.labels" :key="`${ctxName}-${name}-${changeSet.id}-${label}`"
+                        class="tag is-info" v-text="label"
                       />
                     </td>
                   </tr>
@@ -98,7 +101,7 @@
 </template>
 
 <script>
-  import Instance from '@/services/instance';
+  import Instance from '@/services/instance.js';
   import {VIEW_GROUP} from '../../index';
 
   export default {

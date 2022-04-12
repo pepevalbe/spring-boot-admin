@@ -30,47 +30,51 @@
       </tr>
     </thead>
     <transition-group tag="tbody" name="fade-in">
-      <tr key="new-traces" v-if="newTracesCount > 0">
+      <tr v-if="newTracesCount > 0" key="new-traces">
         <td
           colspan="7"
           class="has-text-primary has-text-centered is-selectable"
-          v-text="`${newTracesCount} new traces`"
           @click="$emit('show-new-traces')"
+          v-text="`${newTracesCount} new traces`"
         />
       </tr>
-      <template v-for="trace in traces">
-        <tr class="is-selectable"
-            :class="{ 'httptraces__trace---is-detailed' : showDetails[trace.key] }"
-            @click="showDetails[trace.key] ? $delete(showDetails, trace.key) : $set(showDetails, trace.key, true)"
-            :key="trace.key"
+      <template v-for="trace in traces" :key="trace.key">
+        <tr
+          class="is-selectable"
+          :class="{ 'httptraces__trace---is-detailed' : showDetails[trace.key] }"
+          @click="showDetails[trace.key] ? $delete(showDetails, trace.key) : $set(showDetails, trace.key, true)"
         >
           <td class="httptraces__trace-timestamp" v-text="trace.timestamp.format('L HH:mm:ss.SSS')" />
           <td class="httptraces__trace-method" v-text="trace.request.method" />
           <td class="httptraces__trace-uri" v-text="trace.request.uri" />
           <td class="httptraces__trace-status">
-            <span v-text="trace.response ? trace.response.status : 'pending'" class="tag"
-                  :class="{ 'is-muted' : trace.isPending(), 'is-success' : trace.isSuccess(), 'is-warning' : trace.isClientError(), 'is-danger' : trace.isServerError() }"
+            <span
+              class="tag" :class="{ 'is-muted' : trace.isPending(), 'is-success' : trace.isSuccess(), 'is-warning' : trace.isClientError(), 'is-danger' : trace.isServerError() }"
+              v-text="trace.response ? trace.response.status : 'pending'"
             />
           </td>
           <td class="httptraces__trace-contentType" v-text="trace.contentTypeRequest" />
-          <td class="httptraces__trace-contentLength"
-              v-text="trace.contentLengthRequest ? prettyBytes(trace.contentLengthRequest) : ''"
+          <td
+            class="httptraces__trace-contentLength"
+            v-text="trace.contentLengthRequest ? prettyBytes(trace.contentLengthRequest) : ''"
           />
           <td class="httptraces__trace-contentType" v-text="trace.contentTypeResponse" />
-          <td class="httptraces__trace-contentLength"
-              v-text="trace.contentLengthResponse ? prettyBytes(trace.contentLengthResponse) : ''"
+          <td
+            class="httptraces__trace-contentLength"
+            v-text="trace.contentLengthResponse ? prettyBytes(trace.contentLengthResponse) : ''"
           />
-          <td class="httptraces__trace-timeTaken"
-              v-text="trace.timeTaken !== null && typeof trace.timeTaken !== 'undefined' ? `${trace.timeTaken} ms` : ''"
+          <td
+            class="httptraces__trace-timeTaken"
+            v-text="trace.timeTaken !== null && typeof trace.timeTaken !== 'undefined' ? `${trace.timeTaken} ms` : ''"
           />
         </tr>
-        <tr :key="`${trace.key}-detail`" v-if="showDetails[trace.key]">
+        <tr v-if="showDetails[trace.key]" :key="`${trace.key}-detail`">
           <td colspan="7">
             <pre class="httptraces__trace-detail" v-text="toJson(trace)" />
           </td>
         </tr>
       </template>
-      <tr key="no-traces" v-if="traces.length === 0">
+      <tr v-if="traces.length === 0" key="no-traces">
         <td class="is-muted" colspan="7" v-text="$t('instances.httptrace.no_traces_found')" />
       </tr>
     </transition-group>

@@ -16,7 +16,7 @@
 
 <template>
   <sba-instance-section :error="error">
-    <template v-slot:before>
+    <template #before>
       <sba-sticky-subnav>
         <div class="mx-6">
           <div class="inline-flex items-center">
@@ -46,15 +46,14 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {StartupActuatorService} from '@/services/startup-actuator';
 import {VIEW_GROUP} from '../../index';
-import TreeTable from '@/views/instances/startup/tree-table';
-import SbaInstanceSection from '@/views/instances/shell/sba-instance-section';
-import SbaPanel from '@/components/sba-panel';
+import TreeTable from '@/views/instances/startup/tree-table.vue';
+import SbaInstanceSection from '@/views/instances/shell/sba-instance-section.vue';
 
 export default {
-  components: {SbaPanel, SbaInstanceSection, TreeTable},
+  components: {SbaInstanceSection, TreeTable},
   props: {
     instance: {
       type: Instance,

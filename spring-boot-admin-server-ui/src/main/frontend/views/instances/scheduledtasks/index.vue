@@ -82,13 +82,12 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {VIEW_GROUP} from '../../index';
-import SbaInstanceSection from '@/views/instances/shell/sba-instance-section';
-import SbaPanel from '@/components/sba-panel';
+import SbaInstanceSection from '@/views/instances/shell/sba-instance-section.vue';
 
 export default {
-  components: {SbaPanel, SbaInstanceSection},
+  components: {SbaInstanceSection},
   props: {
     instance: {
       type: Instance,

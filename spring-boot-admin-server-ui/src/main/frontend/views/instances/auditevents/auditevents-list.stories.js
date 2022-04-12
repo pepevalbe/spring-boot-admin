@@ -1,5 +1,5 @@
 import Index from './index';
-import Instance from "@/services/instance";
+import Instance from '@/services/instance.js';
 import {applications} from '@/mocks/applications/data'
 
 export default {

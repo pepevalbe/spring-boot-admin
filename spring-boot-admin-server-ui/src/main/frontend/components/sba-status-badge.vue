@@ -1,19 +1,19 @@
 <template>
-  <span :class="classNames('status-badge', status)" v-text="status" />
+  <span :class="classNames('status-badge', status.toLowerCase())" v-text="status" />
 </template>
 
 <script>
 import classNames from 'classnames';
+import {HealthStatus} from '../HealthStatus.js';
 
 export default {
-  name: 'SbaStatusBadge',
   props: {
-    /*
-     * Possible values are: unknown, outofservice, up, down, offline, restricted
-     */
     status: {
-      type: String,
-      required: true
+      type: [HealthStatus, String],
+      required: true,
+      validator(value) {
+        return HealthStatus.hasOwnProperty(value.toUpperCase());
+      }
     }
   },
   methods: {

@@ -17,23 +17,24 @@
 <template>
   <table class="w-full">
     <tbody>
-      <tr v-for="logger in loggers.slice(0, this.visibleLimit)" :key="logger.name">
+      <tr v-for="logger in loggers.slice(0, visibleLimit)" :key="logger.name">
         <td class="w-9/12">
           <span class="break-all" v-text="logger.name" />&nbsp;
-          <sba-tag class="tag is-primary is-uppercase" v-if="logger.isNew" :value="$t('instances.loggers.new')" />
+          <sba-tag v-if="logger.isNew" class="tag is-primary is-uppercase" :value="$t('instances.loggers.new')" />
         </td>
         <td class="w-1/4">
-          <sba-logger-control class="is-pulled-right"
-                              :level-options="levels"
-                              :value="logger.level"
-                              :status="loggersStatus[logger.name]"
-                              :allow-reset="logger.name !== 'ROOT'"
-                              @input="level => $emit('configureLogger', {logger, level})"
+          <sba-logger-control
+            class="is-pulled-right"
+            :level-options="levels"
+            :value="logger.level"
+            :status="loggersStatus[logger.name]"
+            :allow-reset="logger.name !== 'ROOT'"
+            @input="level => $emit('configureLogger', {logger, level})"
           />
 
           <p
-            class="has-text-danger"
             v-if="loggersStatus[logger.name] && loggersStatus[logger.name].status === 'failed'"
+            class="has-text-danger"
           >
             <font-awesome-icon class="has-text-danger" icon="exclamation-triangle" />
             <span v-text="$t('instances.loggers.setting_loglevel_failed', {logger: logger.name, loglevel: loggersStatus[logger.name].level})" />
@@ -52,7 +53,7 @@
 </template>
 <script>
     import InfiniteLoading from 'vue-infinite-loading'
-    import SbaLoggerControl from './logger-control'
+    import SbaLoggerControl from './logger-control.vue'
 
     export default {
     components: {InfiniteLoading, SbaLoggerControl},

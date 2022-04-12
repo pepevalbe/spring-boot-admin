@@ -20,7 +20,7 @@
       <div>
         <sba-alert v-if="error" :error="error" :title="$t('instances.details.process.fetch_failed')" />
         <sba-key-value-table class="-mx-4 -my-3" :map="tableData">
-          <template v-slot:uptime="value">
+          <template #uptime="value">
             <process-uptime :value="value.value" />
           </template>
         </sba-key-value-table>
@@ -30,23 +30,23 @@
 </template>
 
 <script>
+import {take} from 'rxjs/operators';
 import sbaConfig from '@/sba-config'
 import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs';
-import {toMillis} from '../metrics/metric';
+import {toMillis} from '../metrics/metric.vue';
 import processUptime from './process-uptime';
-import {take} from 'rxjs/operators';
 
 export default {
+  components: {processUptime},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
       required: true
     }
   },
-  mixins: [subscribing],
-  components: {processUptime},
   data: () => ({
     hasLoaded: false,
     error: null,
@@ -56,11 +56,6 @@ export default {
     processCpuLoad: null,
     systemCpuCount: null
   }),
-  created() {
-    this.fetchPid();
-    this.fetchUptime();
-    this.fetchCpuCount();
-  },
   computed: {
     tableData() {
       return {
@@ -86,6 +81,11 @@ export default {
         }
       }
     },
+  },
+  created() {
+    this.fetchPid();
+    this.fetchUptime();
+    this.fetchCpuCount();
   },
   methods: {
     toMillis,

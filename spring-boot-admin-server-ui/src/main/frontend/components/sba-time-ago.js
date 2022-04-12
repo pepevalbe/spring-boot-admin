@@ -15,6 +15,7 @@
  */
 
 import moment from 'moment';
+import {h} from "vue";
 
 const minute = 60 * 1000;
 const hour = 60 * minute;
@@ -68,9 +69,9 @@ export default {
     }, 1000);
   },
   render() {
-    return this._v(this.timeAgo);
+    return h({template: this.timeAgo});
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.timer) {
       window.clearInterval(this.timer);
     }

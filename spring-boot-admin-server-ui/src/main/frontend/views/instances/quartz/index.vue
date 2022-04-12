@@ -64,8 +64,8 @@
 
 <script>
 import {VIEW_GROUP} from '@/views';
-import Instance from '@/services/instance';
-import TriggerRow from '@/views/instances/quartz/trigger-row';
+import Instance from '@/services/instance.js';
+import TriggerRow from '@/views/instances/quartz/trigger-row.vue';
 
 export default {
   components: {TriggerRow},

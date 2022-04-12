@@ -22,9 +22,10 @@
           <sba-status :status="instance.statusInfo.status" :date="instance.statusTimestamp" />
         </td>
         <td class="is-narrow">
-          <a v-text="instance.registration.serviceUrl || instance.registration.healthUrl"
-             :href="instance.registration.serviceUrl || instance.registration.healthUrl"
-             @click.stop
+          <a
+            :href="instance.registration.serviceUrl || instance.registration.healthUrl"
+            @click.stop
+            v-text="instance.registration.serviceUrl || instance.registration.healthUrl"
           /><br>
           <span class="is-muted" v-text="instance.id" />
         </td>

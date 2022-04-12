@@ -26,33 +26,36 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="event in events">
-        <tr class="is-selectable"
-            :class="{ 'auditevents__event--is-detailed' : showDetails[event.key] }"
-            @click="showDetails[event.key] ? $delete(showDetails, event.key) : $set(showDetails, event.key, true)"
-            :key="event.key"
+      <template v-for="event in events" :key="event.key">
+        <tr
+          class="is-selectable"
+          :class="{ 'auditevents__event--is-detailed' : showDetails[event.key] }"
+          @click="showDetails[event.key] ? $delete(showDetails, event.key) : $set(showDetails, event.key, true)"
         >
           <td v-text="event.timestamp.format('L HH:mm:ss.SSS')" />
           <td>
-            <span v-text="event.type" class="tag"
-                  :class="{ 'is-success' : event.isSuccess(), 'is-danger' : event.isFailure() }"
+            <span
+              class="tag" :class="{ 'is-success' : event.isSuccess(), 'is-danger' : event.isFailure() }"
+              v-text="event.type"
             />
           </td>
           <td v-if="hasSessionEndpoint && event.principal">
-            <router-link v-text="event.principal"
-                         :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { username : event.principal} }"
+            <router-link
+              :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { username : event.principal} }"
+              v-text="event.principal"
             />
           </td>
           <td v-else v-text="event.principal" />
           <td v-text="event.remoteAddress" />
           <td v-if="hasSessionEndpoint && event.sessionId">
-            <router-link v-text="event.sessionId"
-                         :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { sessionId : event.sessionId } }"
+            <router-link
+              :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { sessionId : event.sessionId } }"
+              v-text="event.sessionId"
             />
           </td>
           <td v-else v-text="event.sessionId" />
         </tr>
-        <tr :key="`${event.key}-detail`" v-if="showDetails[event.key]">
+        <tr v-if="showDetails[event.key]" :key="`${event.key}-detail`">
           <td colspan="5">
             <pre class="auditevents__event-detail" v-text="toJson(event.data)" />
           </td>
@@ -69,8 +72,8 @@
 </template>
 
 <script>
-  import Instance from '@/services/instance';
   import prettyBytes from 'pretty-bytes';
+  import Instance from '@/services/instance.js';
 
   export default {
     props: {

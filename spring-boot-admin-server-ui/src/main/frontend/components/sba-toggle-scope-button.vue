@@ -39,9 +39,10 @@
       <span v-text="$t('term.instance')" />
     </sba-button>
 
-    <p class="text-center text-xs pt-1 truncate" v-if="showInfo">
-      <span v-if="scope === 'application'"
-            v-text="$t('term.affects_all_instances', {count: instanceCount})"
+    <p v-if="showInfo" class="text-center text-xs pt-1 truncate">
+      <span
+        v-if="scope === 'application'"
+        v-text="$t('term.affects_all_instances', {count: instanceCount})"
       />
       <span v-else v-text="$t('term.affects_this_instance_only')" />
     </p>
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-import SbaButton from '@/components/sba-button';
+import SbaButton from './sba-button.vue';
 export default {
   components: {SbaButton},
   model: {

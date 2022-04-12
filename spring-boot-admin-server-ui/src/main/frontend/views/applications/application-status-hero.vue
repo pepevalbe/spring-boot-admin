@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import SbaPanel from '@/components/sba-panel';
+import SbaPanel from '@/components/sba-panel.vue';
 
 const options = {
   year: 'numeric', month: 'numeric', day: 'numeric',
@@ -32,18 +32,10 @@ export default {
       default: () => [],
     }
   },
-  beforeMount() {
-    this.updateLastUpdateTime();
-  },
   data() {
     return {
       lastUpdate: new Date(),
       dateTimeFormat: new Intl.DateTimeFormat(this.$i18n.locale, options)
-    }
-  },
-  watch: {
-    downCount() {
-      this.updateLastUpdateTime();
     }
   },
   computed: {
@@ -52,6 +44,14 @@ export default {
         return current + (next.instances.filter(instance => instance.statusInfo.status !== 'UP').length);
       }, 0);
     }
+  },
+  watch: {
+    downCount() {
+      this.updateLastUpdateTime();
+    }
+  },
+  beforeMount() {
+    this.updateLastUpdateTime();
   },
   methods: {
     updateLastUpdateTime() {

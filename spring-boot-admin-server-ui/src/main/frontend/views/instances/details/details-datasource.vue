@@ -22,8 +22,9 @@
       <div v-if="current" class="level datasource-current">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-info"
-               v-text="$t('instances.details.datasource.active_connections')"
+            <p
+              class="heading has-bullet has-bullet-info"
+              v-text="$t('instances.details.datasource.active_connections')"
             />
             <p v-text="current.active" />
           </div>
@@ -50,13 +51,15 @@
 <script>
 import sbaConfig from '@/sba-config';
 import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs';
 import moment from 'moment';
-import datasourceChart from './datasource-chart';
+import datasourceChart from './datasource-chart.vue';
 import {take} from 'rxjs/operators';
 
 export default {
+  components: {datasourceChart},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
@@ -67,8 +70,6 @@ export default {
       required: true
     }
   },
-  mixins: [subscribing],
-  components: {datasourceChart},
   data: () => ({
     hasLoaded: false,
     error: null,

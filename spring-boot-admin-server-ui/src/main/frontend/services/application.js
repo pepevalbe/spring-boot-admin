@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import axios, {redirectOn401} from '@/utils/axios';
-import waitForPolyfill from '@/utils/eventsource-polyfill';
-import {concat, from, ignoreElements, Observable} from '@/utils/rxjs';
-import uri from '@/utils/uri';
-import sortBy from 'lodash/sortBy';
+import axios, {redirectOn401} from '../utils/axios';
+import waitForPolyfill from '../utils/eventsource-polyfill';
+import {concat, from, ignoreElements, Observable} from '../utils/rxjs.js';
+import uri from '../utils/uri';
+import {sortBy} from 'lodash-es';
 import Instance from './instance';
 
 const actuatorMimeTypes = [
@@ -133,6 +133,31 @@ class Application {
   restart() {
     return this.axios.post(uri`actuator/restart`);
   }
+
+  async writeMBeanAttribute(domain, mBean, attribute, value) {
+    const body = {
+      type: 'write',
+      mbean: `${domain}:${mBean}`,
+      attribute,
+      value
+    };
+    return this.axios.post(uri`actuator/jolokia`, body, {
+      headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    });
+  }
+
+  async invokeMBeanOperation(domain, mBean, operation, args) {
+    const body = {
+      type: 'exec',
+      mbean: `${domain}:${mBean}`,
+      operation,
+      'arguments': args
+    };
+    return this.axios.post(uri`actuator/jolokia`, body, {
+      headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    });
+  }
+
 
   static _transformResponse(data) {
     if (!data) {

@@ -16,16 +16,18 @@
 
 <template>
   <div class="application-summary">
-    <sba-status :status="application.status"
-                :date="application.statusTimestamp"
-                class="application-summary__status"
+    <sba-status
+      :status="application.status"
+      :date="application.statusTimestamp"
+      class="application-summary__status"
     />
     <p class="application-summary__name">
       <span v-text="application.name" /><br>
       <span class="is-muted">
-        <a v-if="application.instances.length === 1"
-           v-text="healthUrl"
-           :href="healthUrl"
+        <a
+          v-if="application.instances.length === 1"
+          :href="healthUrl"
+          v-text="healthUrl"
         />
         <span v-else v-text="`${application.instances.length} instances`" />
       </span>

@@ -1,7 +1,4 @@
-const {colors: defaultColors} = require('tailwindcss/defaultTheme')
-
 const colors = {
-  ...defaultColors,
   ...{
     'orange': {
       DEFAULT: '#ED8936',
@@ -32,11 +29,14 @@ const colors = {
   },
 }
 module.exports = {
-  purge: [],
   darkMode: 'class',
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
   theme: {
-    colors,
     extend: {
+      colors,
       columns: {
         '2': '14rem',
       },

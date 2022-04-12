@@ -16,7 +16,7 @@
 
 
 <template>
-  <div class="hex-mesh" v-on-resize="onResize">
+  <div v-on-resize="onResize" class="hex-mesh">
     <svg xmlns="http://www.w3.org/2000/svg" :width="meshWidth" :height="meshHeight">
       <defs>
         <clipPath id="hex-clip">
@@ -25,14 +25,16 @@
       </defs>
       <template>
         <template v-for="row in rows">
-          <g v-for="col in cols + (row % 2 ? 0 : -1)" :key="`${col}-${row}`"
-             class="hex" :transform="translate(col, row)"
-             :class="classForItem(item(col,row))"
-             @click="click($event,col,row)"
+          <g
+            v-for="col in cols + (row % 2 ? 0 : -1)" :key="`${col}-${row}`"
+            class="hex" :transform="translate(col, row)"
+            :class="classForItem(item(col,row))"
+            @click="click($event,col,row)"
           >
             <polygon :points="hexPath" />
-            <foreignObject v-if="item(col,row)" x="0" y="0" :width="hexWidth" :height="hexHeight"
-                           style="pointer-events: none"
+            <foreignObject
+              v-if="item(col,row)" x="0" y="0" :width="hexWidth" :height="hexHeight"
+              style="pointer-events: none"
             >
               <slot name="item" :item="item(col,row)" />
             </foreignObject>
@@ -80,6 +82,7 @@
   };
 
   export default {
+    directives: {onResize},
     props: {
       items: {
         type: Array,
@@ -91,12 +94,40 @@
         }
       }
     },
-    directives: {onResize},
     data: () => ({
       cols: 1,
       rows: 1,
       sideLength: 1
     }),
+    computed: {
+      itemCount() {
+        return this.items.length;
+      },
+      hexPath() {
+        return `${this.point(0)} ${this.point(1)} ${this.point(2)} ${this.point(3)} ${this.point(4)} ${this.point(5)}`
+      },
+      hexHeight() {
+        return this.sideLength * 2;
+      },
+      hexWidth() {
+        return this.sideLength * Math.sqrt(3);
+      },
+      meshWidth() {
+        return this.hexWidth * this.cols;
+      },
+      meshHeight() {
+        return this.sideLength * (2 + (this.rows - 1) * 1.5);
+      }
+    },
+    watch: {
+      sideLength(newVal) {
+        this.$el.style['font-size'] = `${newVal / 9.5}px`;
+      },
+      itemCount: {
+        handler: 'updateLayout',
+        immediate: true
+      }
+    },
     methods: {
       translate(col, row) {
         const x = (col - 1) * this.hexWidth + (row % 2 ? 0 : this.hexWidth / 2);
@@ -135,35 +166,6 @@
             this.updateLayout();
           }
         }
-      }
-    },
-    computed: {
-      itemCount() {
-        return this.items.length;
-      },
-      hexPath() {
-        return `${this.point(0)} ${this.point(1)} ${this.point(2)} ${this.point(3)} ${this.point(4)} ${this.point(5)}`
-      },
-      hexHeight() {
-        return this.sideLength * 2;
-      },
-      hexWidth() {
-        return this.sideLength * Math.sqrt(3);
-      },
-      meshWidth() {
-        return this.hexWidth * this.cols;
-      },
-      meshHeight() {
-        return this.sideLength * (2 + (this.rows - 1) * 1.5);
-      }
-    },
-    watch: {
-      sideLength(newVal) {
-        this.$el.style['font-size'] = `${newVal / 9.5}px`;
-      },
-      itemCount: {
-        handler: 'updateLayout',
-        immediate: true
       }
     }
   };

@@ -3,7 +3,7 @@
     <div class="modal-background" />
 
     <div class="modal-card">
-      <header class="modal-card-head" v-if="$slots.header">
+      <header v-if="$slots.header" class="modal-card-head">
         <p class="modal-card-title">
           <slot name="header" />
         </p>
@@ -12,11 +12,11 @@
       <section class="modal-card-body">
         <slot name="body" />
       </section>
-      <footer class="modal-card-foot" v-if="$slots.footer">
+      <footer v-if="$slots.footer" class="modal-card-foot">
         <slot name="footer" />
       </footer>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="close" v-if="!$slots.header" />
+    <button v-if="!$slots.header" class="modal-close is-large" aria-label="close" @click="close" />
   </div>
 </template>
 
@@ -28,10 +28,7 @@ export default {
     event: 'change'
   },
   props: {
-    open: {
-      type: Boolean,
-      required: true
-    }
+    open: Boolean
   },
   methods: {
     close() {

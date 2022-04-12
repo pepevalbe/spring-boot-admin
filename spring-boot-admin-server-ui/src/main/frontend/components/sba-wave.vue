@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import WaveBackground from '!raw-loader!../assets/img/wave.svg'
+import WaveBackground from '../assets/img/wave.svg?raw'
 
 export default {
   name: 'SbaWave',

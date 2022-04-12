@@ -21,21 +21,21 @@
         <div class="field">
           <p class="control is-expanded">
             <input
+              v-model.trim="filter.principal"
               class="input"
               type="search"
               :placeholder="$t('instances.auditevents.principal')"
-              v-model.trim="filter.principal"
             >
           </p>
         </div>
         <div class="field">
           <p class="control is-expanded">
             <input
+              v-model="filter.type"
               list="auditevent-type"
               class="input"
               type="search"
               :placeholder="$t('instances.auditevents.type')"
-              v-model="filter.type"
             >
             <datalist id="auditevent-type">
               <option value="AUTHENTICATION_FAILURE" />
@@ -88,10 +88,10 @@
 
 <script>
 import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
+import Instance from '@/services/instance.js';
 import {concatMap, debounceTime, mergeWith, Subject, tap, timer} from '@/utils/rxjs';
-import AuditeventsList from '@/views/instances/auditevents/auditevents-list';
-import uniqBy from 'lodash/uniqBy';
+import AuditeventsList from '@/views/instances/auditevents/auditevents-list.vue';
+import {uniqBy} from 'lodash-es';
 import moment from 'moment';
 import {VIEW_GROUP} from '../../index';
 
@@ -124,14 +124,14 @@ class Auditevent {
 }
 
 export default {
+  components: {AuditeventsList},
+  mixins: [subscribing],
   props: {
     instance: {
       type: Instance,
       required: true
     }
   },
-  mixins: [subscribing],
-  components: {AuditeventsList},
   data: () => ({
     isLoading: false,
     error: null,
